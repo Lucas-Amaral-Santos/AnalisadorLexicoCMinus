@@ -43,7 +43,7 @@ int main(int argc, char *argv[ ]){
 		result = fgetc(arq);
 	
 		if(result){
-			printf("%c\n",result);
+			// printf("%c\n",result);
 			analisador(result, &analisaToken, &i, &estado);
 			// tokens[i] = analisaToken;
 		}
@@ -82,7 +82,7 @@ bool is_letter(char c){
 }
 
 bool is_simbol(char c){
-	return c == '+' || c == '-' || c == '*' || c == '/' || c == ';' || c == ',' || c == '(' || c == ')' || c == '[' || c == ']' || c == '{' || c == '}';
+	return c == '+' || c == '-' || c == '*' || c == '/' || c == ',' || c == '(' || c == ')' || c == '[' || c == ']' || c == '{' || c == '}';
 }
 
 bool is_simbol_comparative(char c){
@@ -90,7 +90,7 @@ bool is_simbol_comparative(char c){
 }
 
 bool is_delimiter(char c){
-	return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\0';
+	return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\0' || c == ';';
 }
 
 Token inicializaToken(){
@@ -130,7 +130,7 @@ void analisador(char c, Token* token, int* i, int* estado){
 				*estado = 24;
 				memset(token->valor, 0, 50);
 				strncpy(token->valor, &c, 1);
-			} else if ((is_letter(c) && c != 'e' && c != 'r' && c != 'v' && c != 'w')){
+			} else if ((is_letter(c) && c != 'e' && c != 'r' && c != 'v' && c != 'w' && c != '/')){
 				*estado = 29;
 				memset(token->valor, 0, 50);
 				strncpy(token->valor, &c, 1);
@@ -166,7 +166,18 @@ void analisador(char c, Token* token, int* i, int* estado){
 				printf("%c", c);
 				*estado = 29;
 				strncat(token->valor, &c, 1);
-			} else {
+			} else if(is_simbol(c)){
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+			}else {
 				printf("ERRO LÉXICO 1\n");	
 			}
 			break;
@@ -177,6 +188,17 @@ void analisador(char c, Token* token, int* i, int* estado){
 			} else if (is_digit(c) || is_delimiter(c)) {
 				*estado = 29;
 				strncat(token->valor, &c, 1);
+			} else if(is_simbol(c)){
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
 			} else {
 				printf("ERRO LÉXICO 2\n");	
 			}
@@ -191,6 +213,17 @@ void analisador(char c, Token* token, int* i, int* estado){
 			} else if (is_delimiter(c)){
 				*estado = 31;
 				strncat(token->valor, &c, 1);
+			} else if(is_simbol(c)){
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
 			} else {
 				printf("ERRO LÉXICO 3\n");	
 			}
@@ -201,7 +234,20 @@ void analisador(char c, Token* token, int* i, int* estado){
 				strncat(token->valor, &c, 1);
 			} else if (is_delimiter(c)){
 				*estado = 0;
-				strncat(token->valor, &c, 1);
+				strcpy(token->tipo, "ELSE");
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol(c)){
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
 			} else {
 				printf("ERRO LÉXICO 4\n");	
 			}
@@ -216,18 +262,46 @@ void analisador(char c, Token* token, int* i, int* estado){
 			} else if (is_delimiter(c) || is_digit(c)){
 				*estado = 29;
 				strncat(token->valor, &c, 1);
+			} else if(is_simbol(c)){
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
 			} else {
 				printf("ERRO LÉXICO 5\n");	
 			}
 			break;
 		case 6:
 			if (is_delimiter(c)){
-				*estado = 32;
-				strncat(token->valor, &c, 1);
+				*estado = 0;
+				strcpy(token->tipo, "IF");
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;	
 			} else if(is_digit(c)){
 				*estado = 29;
 				strncat(token->valor, &c, 1);
-			}  else {
+			} else if(is_simbol(c)){
+				strcpy(token->tipo, "IF");
+				printf("%s: %s\n", token->tipo, token->valor);
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				strcpy(token->tipo, "IF");
+				printf("%s: %s\n", token->tipo, token->valor);
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+			} else {
 				printf("ERRO LÉXICO 6\n");	
 			}
 			break;
@@ -238,7 +312,18 @@ void analisador(char c, Token* token, int* i, int* estado){
 			} else if(is_delimiter(c) || is_digit(c)){
 				*estado = 29;
 				strncat(token->valor, &c, 1);
-			}  else {
+			} else if(is_simbol(c)){
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+			} else {
 				printf("ERRO LÉXICO 7\n");	
 			}
 			break;
@@ -248,10 +333,20 @@ void analisador(char c, Token* token, int* i, int* estado){
 				strcpy(token->tipo, "INT");
 				printf("%s: %s\n", token->tipo, token->valor);
 				*i++;
-				strncat(token->valor, &c, 1);
 			} else if(is_digit(c)){
 				*estado = 29;
 				strncat(token->valor, &c, 1);
+			} else if(is_simbol(c)){
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
 			} else {
 				printf("ERRO LÉXICO 8\n");	
 			}
@@ -263,6 +358,17 @@ void analisador(char c, Token* token, int* i, int* estado){
 			} else if(is_delimiter(c) || is_digit(c)){
 				*estado = 29;
 				strncat(token->valor, &c, 1);
+			} else if(is_simbol(c)){
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
 			} else {
 				printf("ERRO LÉXICO 9\n");	
 			}
@@ -274,7 +380,18 @@ void analisador(char c, Token* token, int* i, int* estado){
 			} else if(is_delimiter(c) || is_digit(c)){
 				*estado = 29;
 				strncat(token->valor, &c, 1);
-			}  else {
+			} else if(is_simbol(c)){
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+			} else {
 				printf("ERRO LÉXICO 10\n");	
 			}
 			break;
@@ -296,7 +413,18 @@ void analisador(char c, Token* token, int* i, int* estado){
 			} else if(is_delimiter(c) || is_digit(c)){
 				*estado = 29;
 				strncat(token->valor, &c, 1);
-			}  else {
+			} else if(is_simbol(c)){
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+			} else {
 				printf("ERRO LÉXICO 12\n");	
 			}
 			break;
@@ -307,18 +435,42 @@ void analisador(char c, Token* token, int* i, int* estado){
 			} else if(is_delimiter(c) || is_digit(c)){
 				*estado = 29;
 				strncat(token->valor, &c, 1);
-			}  else {
+			} else if(is_simbol(c)){
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+			} else {
 				printf("ERRO LÉXICO 13\n");	
 			}
 			break;
 		case 14:
 			if (is_delimiter(c)){
-				*estado = 34;
-				strncat(token->valor, &c, 1);
+				*estado = 0;
+				strcpy(token->tipo, "RETURN");
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
 			} else if(is_digit(c)){
 				*estado = 29;
 				strncat(token->valor, &c, 1);
-			}  else {
+			} else if(is_simbol(c)){
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+			} else {
 				printf("ERRO LÉXICO 14\n");	
 			}
 			break;
@@ -329,7 +481,18 @@ void analisador(char c, Token* token, int* i, int* estado){
 			} else if(is_delimiter(c) || is_digit(c)){
 				*estado = 29;
 				strncat(token->valor, &c, 1);
-			}  else {
+			} else if(is_simbol(c)){
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+			} else {
 				printf("ERRO LÉXICO 15\n");	
 			}
 			break;
@@ -340,7 +503,18 @@ void analisador(char c, Token* token, int* i, int* estado){
 			} else if(is_delimiter(c) || is_digit(c)){
 				*estado = 29;
 				strncat(token->valor, &c, 1);
-			}  else {
+			} else if(is_simbol(c)){
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+			} else {
 				printf("ERRO LÉXICO 16\n");	
 			}
 			break;
@@ -351,32 +525,64 @@ void analisador(char c, Token* token, int* i, int* estado){
 			} else if(is_delimiter(c) || is_digit(c)){
 				*estado = 29;
 				strncat(token->valor, &c, 1);
-			}  else {
+			} else if(is_simbol(c)){
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+			} else {
 				printf("ERRO LÉXICO 17\n");	
 			}
 			break;
 		case 18:
-			if (c = 't'){
-				*estado = 8;
-				strncat(token->valor, &c, 1);
-			} else if(is_digit(c)){
+			if(is_digit(c)){
 				*estado = 29;
 				strncat(token->valor, &c, 1);
 			} else if(is_delimiter(c)){
-				*estado = 35;
-				strncat(token->valor, &c, 1);
-			}  else {
+				*estado = 0;
+				strcpy(token->tipo, "VOID");
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol(c)){
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+			} else {
 				printf("ERRO LÉXICO 18\n");	
 			}
 			break;
 		case 19:
 			if (c = 'h'){
-				*estado = 8;
+				*estado = 20;
 				strncat(token->valor, &c, 1);
 			} else if(is_delimiter(c) || is_digit(c)){
 				*estado = 29;
 				strncat(token->valor, &c, 1);
-			}  else {
+			} else if(is_simbol(c)){
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+			} else {
 				printf("ERRO LÉXICO 19\n");	
 			}
 			break;
@@ -387,7 +593,18 @@ void analisador(char c, Token* token, int* i, int* estado){
 			} else if(is_delimiter(c) || is_digit(c)){
 				*estado = 29;
 				strncat(token->valor, &c, 1);
-			}  else {
+			} else if(is_simbol(c)){
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+			} else {
 				printf("ERRO LÉXICO 20\n");	
 			}
 			break;
@@ -398,7 +615,18 @@ void analisador(char c, Token* token, int* i, int* estado){
 			} else if(is_delimiter(c) || is_digit(c)){
 				*estado = 29;
 				strncat(token->valor, &c, 1);
-			}  else {
+			} else if(is_simbol(c)){
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+			} else {
 				printf("ERRO LÉXICO 21\n");	
 			}
 			break;
@@ -409,21 +637,48 @@ void analisador(char c, Token* token, int* i, int* estado){
 			} else if(is_delimiter(c) || is_digit(c)){
 				*estado = 29;
 				strncat(token->valor, &c, 1);
-			}  else {
+			} else if(is_simbol(c)){
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+			} else {
 				printf("ERRO LÉXICO 22\n");	
 			}
 			break;
 		case 23:
-			if (c = 't'){
-				*estado = 8;
-				strncat(token->valor, &c, 1);
-			} else if(is_delimiter(c)){
+			if(is_letter(c)){
 				*estado = 29;
 				strncat(token->valor, &c, 1);
 			} else if (is_delimiter(c)){
-				*estado = 44;
-				strncat(token->valor, &c, 1);
-			}  else {
+				*estado = 0;
+
+				strcpy(token->tipo, "WHILE");
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol(c)){
+				strcpy(token->tipo, "WHILE");
+				printf("%s: %s\n", token->tipo, token->valor);
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				strcpy(token->tipo, "WHILE");
+				printf("%s: %s\n", token->tipo, token->valor);
+
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+			} else {
 				printf("ERRO LÉXICO 23\n");	
 			}
 			break;
@@ -439,7 +694,18 @@ void analisador(char c, Token* token, int* i, int* estado){
 			if(is_delimiter(c) || is_digit(c) || is_letter(c) || is_simbol(c)){
 				*estado = 26;
 				strncat(token->valor, &c, 1);
-			}  else {
+			} else if(is_simbol(c)){
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+			} else {
 				printf("ERRO LÉXICO 25\n");	
 			}
 			break;
@@ -450,7 +716,18 @@ void analisador(char c, Token* token, int* i, int* estado){
 			} else if (c == '*'){
 				*estado = 27;
 				strncat(token->valor, &c, 1);
-			}  else {
+			} else if(is_simbol(c)){
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+			} else {
 				printf("ERRO LÉXICO 26\n");	
 			}
 			break;
@@ -464,9 +741,20 @@ void analisador(char c, Token* token, int* i, int* estado){
 			break;
 		case 28:
 			if (is_delimiter(c)){
-				*estado = 36;
-				strncat(token->valor, &c, 1);
-			}  else {
+				*estado = 0;
+				*i++;
+			} else if(is_simbol(c)){
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+			} else {
 				printf("ERRO LÉXICO 28\n");	
 			}
 			break;
@@ -483,9 +771,15 @@ void analisador(char c, Token* token, int* i, int* estado){
 			} else if(is_simbol(c)){
 				*estado = 0;
 				strcpy(token->tipo, "IDENTIFICADOR");
-				strncpy(token->valor, &c, 1);
+				// strncpy(token->valor, &c, 1);
 				printf("%s: %s\n", token->tipo, token->valor);
 				*i++;
+			}else if(is_simbol_comparative(c)){
+				*estado = 40;
+				strcpy(token->tipo, "IDENTIFICADOR");
+				printf("%s: %s\n", token->tipo, token->valor);
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
 			} else {
 				printf("ERRO LÉXICO 29\n");	
 			}
@@ -500,53 +794,26 @@ void analisador(char c, Token* token, int* i, int* estado){
 				printf("%s: %s\n", token->tipo, token->valor);
 				*i++;
 				strncat(token->valor, &c, 1);
+			} else if(is_simbol(c)){
+				strcpy(token->tipo, "CONSTANTE");
+				printf("%s: %s\n", token->tipo, token->valor);
+				*estado = 0;
+				strcpy(token->tipo, "SIMBOLO");
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+			} else if(is_simbol_comparative(c)){
+				strcpy(token->tipo, "CONSTANTE");
+				printf("%s: %s\n", token->tipo, token->valor);
+				*estado = 40;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
 			} else {
 				printf("ERRO LÉXICO 30\n");	
 			}
 			break;
-		case 31:
-			*estado = 0;
-			strcpy(token->tipo, "ELSE");
-			printf("%s: %s\n", token->tipo, token->valor);
-			*i++;
-			break;
-		case 32:
-			*estado = 0;
-			strcpy(token->tipo, "IF");
-			printf("%s: %s\n", token->tipo, token->valor);
-			*i++;			
-			break;
 
-		case 34:
-			*estado = 0;
-			strcpy(token->tipo, "RETURN");
-			printf("%s: %s\n", token->tipo, token->valor);
-			*i++;
-			
-			break;
-		case 35:
-			*estado = 0;
-			strcpy(token->tipo, "VOID");
-			printf("%s: %s\n", token->tipo, token->valor);
-			*i++;
-			
-			break;
-		case 36:
-			*estado = 0;
-			*i++;
-			break;
-
-		case 38:
-			
-			
-			break;
-		case 39:
-			if(is_delimiter(c)){
-				*estado = 43;
-			} else {
-				printf("ERRO LÉXICO 39\n");	
-			}
-			break;
 		case 40:
 			if(c == '='){
 				*estado = 0;
@@ -554,6 +821,20 @@ void analisador(char c, Token* token, int* i, int* estado){
 				strncat(token->valor, &c, 1);
 				printf("%s: %s\n", token->tipo, token->valor);
 				*i++;
+			} else if(is_digit(c)){
+				*estado = 30;
+				strcpy(token->tipo, "OPERADOR");
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
+			} else if(is_letter(c)){
+				*estado = 29;
+				strcpy(token->tipo, "OPERADOR");
+				printf("%s: %s\n", token->tipo, token->valor);
+				*i++;
+				memset(token->valor, 0, 50);
+				strncpy(token->valor, &c, 1);
 			} else if(is_delimiter(c)){
 				*estado = 0;
 				strcpy(token->tipo, "OPERADOR");
@@ -562,37 +843,10 @@ void analisador(char c, Token* token, int* i, int* estado){
 			} else{
 				printf("ERRO LÉXICO 40\n");	
 			}
-			break;
-		case 41:
-			if(is_delimiter(c)){
-				*estado = 42;
-				strncat(token->valor, &c, 1);
-			} else {
-				printf("ERRO LÉXICO 41\n");	
-			}
-		case 42:
-			*estado = 0;
-			strcpy(token->tipo, "SIMBOLO");
-			printf("%s: %s\n", token->tipo, token->valor);
-			*i++;
-			
-			break;
-		case 43:
-			*estado = 0;		
-			strcpy(token->tipo, "SIMBOLO");
-			printf("%s: %s\n", token->tipo, token->valor);
-			*i++;
-			
-			break;
-		case 44:
-			*estado = 0;
-			strcpy(token->valor, "WHILE");
-			printf("%s: %s\n", token->tipo, token->valor);
-			*i++;
-			
-			break;
+
+
 		default:
-			printf("ERRO ");
-			printf("character: %c   ", c);
+			// printf("ERRO character: %c   ", c);
+			break;
 	}
 }

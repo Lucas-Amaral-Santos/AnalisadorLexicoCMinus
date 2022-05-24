@@ -12,7 +12,7 @@ typedef struct
 	char tipo[50];
 } Token;
 
-int main(){
+int main(int argc, char *argv[ ]){
 
 	FILE *arq;
 	char linha[200];
@@ -20,7 +20,12 @@ int main(){
 	int i;
 	int estado = 0;
 
-	arq = fopen("teste.c", "rt");
+	if(argc == 1) {
+		printf("Nenhum arquivo selecionado.\n");
+		return;
+	}
+
+	arq = fopen(argv[1], "rt");
 
 	if (arq == NULL){
 		printf("Problemas na abertura do arquivo.\n");
